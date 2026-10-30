@@ -10,7 +10,7 @@
 
 ## Готово, когда
 
-README говорит: `make db`, `make run`, `make web`. Health и страница Vite открываются.
+README говорит: `make docker.start`, `make run`, `make web`. Health и страница Vite открываются. Схема к этому моменту уже накатана через `make migrate`.
 
 ## Шаги
 

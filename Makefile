@@ -1,36 +1,32 @@
 SHELL := /bin/bash
 
-.PHONY: help db db-down db-logs migrate migrate-down migrate-status test run web
+.PHONY: help docker.start docker.stop migrate migrate-down migrate-status test run web
 
 help:
 	@printf '%s\n' \
-		'make db              поднять Postgres' \
-		'make db-down         остановить Postgres' \
-		'make db-logs         логи Postgres' \
-		'make migrate         накатить миграции' \
-		'make migrate-down    откатить последнюю миграцию' \
-		'make migrate-status  какие миграции применены' \
-		'make test            go test ./...' \
-		'make run             локальный сервер' \
-		'make web             админка через Vite'
+		'make docker.start     поднять контейнеры' \
+		'make docker.stop      остановить контейнеры' \
+		'make migrate          накатить миграции' \
+		'make migrate-down     откатить последнюю миграцию' \
+		'make migrate-status   текущая версия схемы' \
+		'make test             go test ./...' \
+		'make run              локальный сервер' \
+		'make web              админка через Vite'
 
-db:
-	docker compose up -d --wait postgres
+docker.start:
+	docker compose up -d --wait
 
-db-down:
-	docker compose stop postgres
-
-db-logs:
-	docker compose logs -f postgres
+docker.stop:
+	docker compose stop
 
 migrate:
-	set -a; . ./.env; set +a; goose -dir migrations postgres "$$DATABASE_URL" up
+	set -a; . ./.env; set +a; go run -tags postgres github.com/golang-migrate/migrate/v4/cmd/migrate@v4.20.1 -path migrations -database "$$DATABASE_URL" up
 
 migrate-down:
-	set -a; . ./.env; set +a; goose -dir migrations postgres "$$DATABASE_URL" down
+	set -a; . ./.env; set +a; go run -tags postgres github.com/golang-migrate/migrate/v4/cmd/migrate@v4.20.1 -path migrations -database "$$DATABASE_URL" down 1
 
 migrate-status:
-	set -a; . ./.env; set +a; goose -dir migrations postgres "$$DATABASE_URL" status
+	set -a; . ./.env; set +a; go run -tags postgres github.com/golang-migrate/migrate/v4/cmd/migrate@v4.20.1 -path migrations -database "$$DATABASE_URL" version
 
 test:
 	go test ./...
