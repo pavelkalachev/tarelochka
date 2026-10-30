@@ -10,7 +10,7 @@
 
 ## Готово, когда
 
-README говорит: поднять Postgres, запустить Go, запустить Vite. Health и страница Vite открываются.
+README говорит: `make db`, `make run`, `make web`. Health и страница Vite открываются.
 
 ## Шаги
 
